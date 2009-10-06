@@ -3,6 +3,7 @@ require 'context.rb'
 # DRYML rendering extension
 #--------------------------------------------
 
+
 class DrymlExt
 
   def initialize(config)
@@ -91,4 +92,14 @@ class DrymlExt
     end
     return @handle_all_results.call(result_output, context)
   end 
+end
+
+
+def get_file_as_string(filename)
+  data = ''
+  f = File.open(filename, "r") 
+  f.each_line do |line|
+    data += line
+  end
+  return data
 end

@@ -27,7 +27,7 @@ def handle_res_1(arg_result, context)
   before_ctx = par_ctx[:before]
   if before_ctx
     if before_ctx[:separator] 
-      puts "Handle with SEPARATOR!!"             
+      # puts "Handle with SEPARATOR!!"             
     end
   end 
   return arg_result, context
@@ -68,30 +68,19 @@ def do_stuff(context)
   return "panel: { title: 'mypanel'}"
 end
 
-output = concat_ext(
- {:root => true, :tag => 'root'},
- {
-   :context => {:a => 1, :tag => 'a', :separator => true},
-   :exec => Proc.new {|parent_context| concat_ext(
-     {:nested => true, :parent_context => parent_context, :tree => parent_context[:tree]},
-     {
-       :context => {:a => 22, :tag => 'c'},
-       :exec => Proc.new {|x| do_stuff(x)}
-     },
-     {
-       :context => {:a => 33, :tag => 'c'},
-       :exec => Proc.new {|x| do_stuff(x)}
-     }
-
-   )}
- },
- {
-    :context => {:a => 4, :tag => 'a'},
-    :exec => Proc.new {|x| do_stuff(x)}
- } 
-)
-
-puts "FINAL OUTPUT:\n"
-puts output
+puts eval(get_file_as_string 'example1.dryml.erb')
 
 
+# output = concat_ext(
+#  {:root => true, :tag => 'root'},
+#  {
+#    :context => {},
+#    :exec => Proc.new {|parent_context| concat_ext(
+#      {:parent_context => parent_context, :tree => parent_context[:tree]},
+#      {
+#        :context => {},
+#        :exec => Proc.new {|x| do_stuff(x)}
+#      }
+#    )}
+#  }
+# )
