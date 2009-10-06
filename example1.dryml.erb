@@ -1,0 +1,22 @@
+output = concat_ext(
+ {:root => true, :tag => 'root'},
+ {
+   :context => {:a => 1, :tag => 'a', :separator => true},
+   :exec => Proc.new {|parent_context| concat_ext(
+     {:nested => true, :parent_context => parent_context, :tree => parent_context[:tree]},
+     {
+       :context => {:a => 22, :tag => 'c'},
+       :exec => Proc.new {|x| do_stuff(x)}
+     },
+     {
+       :context => {:a => 33, :tag => 'c'},
+       :exec => Proc.new {|x| do_stuff(x)}
+     }
+
+   )}
+ },
+ {
+    :context => {:a => 4, :tag => 'a'},
+    :exec => Proc.new {|x| do_stuff(x)}
+ } 
+)
