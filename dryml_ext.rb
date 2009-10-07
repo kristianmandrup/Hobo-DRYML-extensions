@@ -3,6 +3,58 @@ require 'context.rb'
 # DRYML rendering extension
 #--------------------------------------------
 
+# TODO: context methods here!
+module MyContext
+  
+  # create new tree node with child context and add to existing context node
+  # TODO: Where does this belong?
+  def add_node(child_context, child_label, context_node)
+    context_node << Tree::TreeNode.new(child_label.to_s, child_context)
+  end
+
+  def add_child(arg_item, index)
+    # add child context to context before call 
+    before = before(arg_item)
+    child_context = arg_item[:context]
+    tag_name = child_context[:tag]
+    node_label = "#{tag_name}_#{index}"
+    child = Tree::TreeNode.new(node_label, before)  
+    work_context = context[:current] || context    
+    current_node = context[:current_node] || context[:tree]
+    if current_node
+      current_node << child 
+    end
+    self[:current_node] = current_node                
+    self[:current] = before 
+    self[:current_child_node] = child   
+  end
+
+  def add_return(return_context)
+    current_context = self[:current]
+    current_context[:after] = return_context
+  end  
+  
+  def before(arg_item)
+    self[:before] = arg_item[:context]
+  end
+  
+  def parent
+    current_node = self[:current_node]
+    current_context = self[:current]
+    current_node_context = current_context.content
+    if current_node
+      parent_ctx = current_node.content
+    else
+      parent_ctx = nil
+    end
+    parent_ctx
+  end  
+  
+end
+
+def contextualize(*context)
+  context.each {|c| c.extend(MyContext) }  
+end
 
 class DrymlExt
 
@@ -63,6 +115,8 @@ class DrymlExt
       parent_current_node = parent_context[:current_child_node]
       context[:current_node] = parent_current_node
     end
+    contextualize(context, parent_context, parent_current_node)
+    
     return context, parent_context, parent_current_node
   end    
   
